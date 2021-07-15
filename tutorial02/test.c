@@ -42,6 +42,20 @@ static void test_parse_false() {
     EXPECT_EQ_INT(LEPT_FALSE, lept_get_type(&v));
 }
 
+#define TEST_LITERAL(expect, json)\
+    do {\
+        lept_value v;\
+        v.type = expect;\
+        EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, json));\
+        EXPECT_EQ_INT(expect, lept_get_type(&v));\
+    } while(0)
+
+static void lept_parse_literal() {
+    TEST_LITERAL(LEPT_NULL, "null");
+    TEST_LITERAL(LEPT_TRUE, "true");
+    TEST_LITERAL(LEPT_FALSE, "false");
+}
+
 #define TEST_NUMBER(expect, json)\
     do {\
         lept_value v;\
@@ -114,16 +128,14 @@ static void test_parse_root_not_singular() {
 }
 
 static void test_parse_number_too_big() {
-#if 0
+#if 1
     TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "1e309");
     TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
 #endif
 }
 
 static void test_parse() {
-    test_parse_null();
-    test_parse_true();
-    test_parse_false();
+    lept_parse_literal();
     test_parse_number();
     test_parse_expect_value();
     test_parse_invalid_value();
